@@ -1,0 +1,32 @@
+1.vi portainer-server-stack.yml
+2.version: "3.2"
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    command: -H tcp://tasks.portainer_agent:9001 --tlsskipverify
+    ports:
+      - "9000:9000"
+    volumes:
+      - portainer_data:/data
+    networks:
+      - portainer_agent_network
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  portainer_data:
+
+networks:
+  portainer_agent_network:
+    external: true
+
+3.docker network ls | grep portainer
+
+4.docker stack deploy -c portainer-server-stack.yml portainer-ui
+
+5. docker service ls
+docker stack ps portainer-ui
+
