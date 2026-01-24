@@ -24,7 +24,14 @@ networks:
     external: true
 
 3.docker network ls | grep portainer
-
+//if network is not there
+docker network create \
+  --driver overlay \
+  --scope swarm \
+  portainer_agent_network
+then check
+docker network ls
+//
 4.docker stack deploy -c portainer-server-stack.yml portainer-ui
 
 5. docker service ls
