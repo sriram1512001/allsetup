@@ -101,3 +101,49 @@ EOF
 sudo cat /etc/systemd/system/node_exporter.service
 sudo systemctl daemon-reload  && sudo systemctl enable node_exporter
 sudo systemctl start node_exporter.service && sudo systemctl status node_exporter.service --no-pager
+
+
+#------
+1.cd /opt
+sudo wget https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-amd64.tar.gz
+
+2.sudo tar -xvf node_exporter-1.10.2.linux-amd64.tar.gz
+
+3.sudo mv node_exporter-1.10.2.linux-amd64/node_exporter /usr/local/bin/
+
+4.sudo useradd -rs /bin/false node_exporter
+
+5.sudo vi /etc/systemd/system/node_exporter.service
+
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+
+6.sudo systemctl daemon-reload
+sudo systemctl start node_exporter
+sudo systemctl enable node_exporter
+
+7. systemctl status node_exporter
+
+8. sudo vi /etc/prometheus/prometheus.yml
+
+9. Add insice scrape config
+    - job_name: "node"
+    static_configs:
+      - targets: ["172.31.28.127:9100"]
+10. sudo systemctl restart prometheus
+
+11. http://<prometheus-ip>:9090/targets
+
+12. refresh grafana u can see load on cpu
+#cmd to load on cpu=>     yes > /dev/null &
+
